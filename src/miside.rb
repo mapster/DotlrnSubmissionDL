@@ -8,8 +8,7 @@ class MiSide
 
     def fetch(uri_str)
         uri = URI.parse(uri_str)
-        req = Net::HTTP::Get.new(uri.path)
-        uri.methods
+        req = Net::HTTP::Get.new(uri.request_uri)
         req.initialize_http_header({'Cookie' => @cookie}) unless @cookie.nil?
 
         http = Net::HTTP.new(uri.host, uri.port)
