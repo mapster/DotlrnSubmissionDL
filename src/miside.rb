@@ -6,12 +6,10 @@ require 'uri'
 class MiSide
     LOGIN_URL = "https://miside.uib.no/register/user-login"
 
-    def fetch(uri_str, limit = 10)
-        # You should choose a better exception.
-        raise ArgumentError, 'too many HTTP redirects' if limit == 0
-
+    def fetch(uri_str)
         uri = URI.parse(uri_str)
         req = Net::HTTP::Get.new(uri.path)
+        uri.methods
         req.initialize_http_header({'Cookie' => @cookie}) unless @cookie.nil?
 
         http = Net::HTTP.new(uri.host, uri.port)
@@ -25,13 +23,14 @@ class MiSide
     end
 
     def followRedirect(response, limit = 10)
+        raise ArgumentError, 'too many HTTP redirects' if limit == 0
+
         case response
         when Net::HTTPSuccess then
             response
         when Net::HTTPRedirection then
             location = response['location']
-            warn "redirected to #{location}"
-            fetch(location, limit - 1) {|response| followRedirect(response)}
+            fetch(location) {|response| followRedirect(response, limit -1)}
         else
             response
         end
@@ -47,7 +46,16 @@ class MiSide
 
         response = http.request(req)
         @cookie = response['Set-Cookie']
-        followRedirect(response)
+        response = followRedirect(response)
+
+        case response
+        when Net::HTTPInternalServerError then
+            "Could not login."
+        when Net::HTTPSuccess then
+            "Successfully logged in."
+        else
+            "Unknown error."
+        end
     end
 
 end
