@@ -47,8 +47,10 @@ class MyMenu < Menu
     end
 
     def action_list_submissions
+        i = 0
         fetch_submissions.each {|s|
-            puts "#{s.student} <#{s.file_name}>"
+            puts "#{i} #{s.student} <#{s.file_name}>"
+            i += 1
         }
     end
 

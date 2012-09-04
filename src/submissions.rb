@@ -23,10 +23,17 @@ def get_submissions(html_string)
 
     els = html.xpath('.//div[@id="folders"]/span/form/table/tbody/tr')
     submissions = els.map { |e|
-        Submission.new(e.xpath('./td[@headers="contents_file_owner_name"]').first.text.strip,
-                       e.xpath('./td[@headers="contents_name"]/a').first.attribute('href').text.strip,
-                       e.xpath('./td[@headers="contents_name"]/span').first.text.strip,
-                       e.xpath('./td[@headers="contents_last_modified_pretty"]').first.text.strip)
+
+        owner_node = e.xpath('./td[@headers="contents_file_owner_name"]').first
+        url_node   = e.xpath('./td[@headers="contents_name"]/a').first.attribute('href')
+        file_node  = e.xpath('./td[@headers="contents_name"]/span').first
+        modified_node = e.xpath('./td[@headers="contents_last_modified_pretty"]').first
+
+        owner = owner_node.text.strip unless owner_node.nil?
+        url = url_node.text.strip unless url_node.nil?
+        file = file_node.text.strip unless file_node.nil?
+        modified = modified_node.text.strip unless modified_node.nil?
+        Submission.new(owner, url, file, modified)
     }
 end
 
