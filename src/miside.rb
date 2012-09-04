@@ -4,7 +4,19 @@ require 'net/http'
 require 'uri'
 
 class MiSide
+    class LoginError < RuntimeError
+    end
+
+
+
     LOGIN_URL = "https://miside.uib.no/register/user-login"
+    LOGIN_URI = URI.parse(LOGIN_URL)
+
+    def fetch_submission(path)
+        fetch ("#{LOGIN_URI.scheme}://#{LOGIN_URI.host}#{path}") {|response|
+            follow_redirect(response)
+        }
+    end
 
     def fetch(uri_str)
         uri = URI.parse(uri_str)
@@ -21,7 +33,7 @@ class MiSide
         end
     end
 
-    def followRedirect(response, limit = 10)
+    def follow_redirect(response, limit = 10)
         raise ArgumentError, 'too many HTTP redirects' if limit == 0
 
         case response
@@ -29,7 +41,7 @@ class MiSide
             response
         when Net::HTTPRedirection then
             location = response['location']
-            fetch(location) {|response| followRedirect(response, limit -1)}
+            fetch(location) {|response| follow_redirect(response, limit -1)}
         else
             response
         end
@@ -45,15 +57,16 @@ class MiSide
 
         response = http.request(req)
         @cookie = response['Set-Cookie']
-        response = followRedirect(response)
+        response = follow_redirect(response)
 
         case response
         when Net::HTTPInternalServerError then
-            "Could not login."
+            #not entirely correct
+            raise LoginError, "Invalid username/password combination"
         when Net::HTTPSuccess then
             "Successfully logged in."
         else
-            "Unknown error."
+            raise LoginError, "Unknown error."
         end
     end
 
