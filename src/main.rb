@@ -1,6 +1,7 @@
 #!/usr/bin/ruby
 
 require 'fileutils'
+require 'io/console'
 
 require './miside.rb'
 require './submissions.rb'
@@ -84,7 +85,7 @@ end
 puts "Email: "
 email = gets.strip
 puts "Password: "
-password = gets.strip
+password = STDIN.noecho(&:gets).strip
 
 miside = MiSide.new
 puts miside.login(email, password)
