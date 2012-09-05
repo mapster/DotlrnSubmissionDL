@@ -1,11 +1,9 @@
-#!/usr/bin/ruby
-
 require 'fileutils'
 require 'io/console'
 
 require 'menu/base'
 
-class MyMenu < Menu
+class MainMenu < Menu
 
     def initialize(miside, submissionUrl)
         super()

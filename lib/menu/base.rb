@@ -1,5 +1,3 @@
-#!/usr/bin/ruby
-
 class Menu
 
     def initialize
