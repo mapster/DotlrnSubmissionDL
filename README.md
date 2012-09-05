@@ -2,6 +2,7 @@ DotlrnSubmissionDL
 ==================
 
 Install:
+--------
 1. Make sure ruby and rubygems is installed.
 2. Install bundler gem
     `$ gem install bundler`
