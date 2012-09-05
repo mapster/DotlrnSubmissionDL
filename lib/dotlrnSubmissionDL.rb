@@ -4,31 +4,26 @@ require 'fileutils'
 require 'io/console'
 require 'yaml'
 
-require 'miside.rb'
+require 'miside/base'
 require 'submissions.rb'
 require 'menus'
 
-class Auth 
-    attr_reader :email, :password
-    def initialize(email, password)
-        @email = email
-        @password = password
-    end
-end
-
+#setup auth
 auth_file = (File.dirname(__FILE__) + "/../.auth.yaml")
 if File.exist?(auth_file)
     auth = YAML::load(File.open(auth_file, "r").read)
 else
+    auth = Auth.new
     print "Email: "
-    email = gets.strip
+    auth.email = gets.strip
 
     print "Password: "
-    password = STDIN.noecho(&:gets).strip
+    auth.password = STDIN.noecho(&:gets).strip
+    puts ""
 end
 
 miside = MiSide.new
-puts miside.login(email, password)
+puts miside.login(auth)
 
 puts "Url for submission folder: "
 submissionUrl = gets

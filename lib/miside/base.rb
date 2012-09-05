@@ -3,6 +3,8 @@
 require 'net/http'
 require 'uri'
 
+require 'miside/auth'
+
 module URI
     class << self
         def parse_with_safety(uri)
@@ -57,10 +59,10 @@ class MiSide
         end
     end
 
-    def login(email, password)
+    def login(auth)
         uri = URI.parse(LOGIN_URL)
         req = Net::HTTP::Post.new(uri.path)
-        req.form_data = {'email' => email, 'password' => password, 'domain' => 'student'}
+        req.form_data = auth.get_hash 
 
         http = Net::HTTP.new(uri.host, uri.port)
         http.use_ssl= uri.scheme == 'https'
