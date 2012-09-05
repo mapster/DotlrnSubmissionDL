@@ -16,3 +16,6 @@ tmp
 .yardoc
 _yardoc
 doc/
+
+#private files
+.auth.yaml
