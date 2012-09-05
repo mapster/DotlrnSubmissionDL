@@ -1,8 +1,6 @@
 #!/usr/bin/env ruby
 
 require 'nokogiri'
-require 'rexml/document'
-include REXML
 
 class Submission
     attr_accessor :student
