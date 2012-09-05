@@ -3,11 +3,22 @@
 require 'net/http'
 require 'uri'
 
+module URI
+    class << self
+
+        def parse_with_safety(uri)
+            parse_without_safety uri.gsub('[', '%5B').gsub(']', '%5D')
+        end
+
+        alias parse_without_safety parse
+        alias parse parse_with_safety
+    end
+end
+
+
 class MiSide
     class LoginError < RuntimeError
     end
-
-
 
     LOGIN_URL = "https://miside.uib.no/register/user-login"
     LOGIN_URI = URI.parse(LOGIN_URL)
@@ -19,7 +30,7 @@ class MiSide
     end
 
     def fetch(uri_str)
-        uri = URI.parse(uri_str)
+        uri = URI.parse(URI.encode(uri_str))
         req = Net::HTTP::Get.new(uri.request_uri)
         req.initialize_http_header({'Cookie' => @cookie}) unless @cookie.nil?
 

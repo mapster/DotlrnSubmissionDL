@@ -5,33 +5,7 @@ require 'io/console'
 
 require './miside.rb'
 require './submissions.rb'
-
-
-class Menu
-
-    def initialize
-        @actions = self.methods.select { |m| m.to_s.start_with?("action_") }
-    end
-
-    def print_menu
-       puts "Select an action: "
-       menu = @actions.map {|a| a.to_s.sub("action_","").sub("_", " ").capitalize }
-       i = 0
-       menu.each {|m|
-           puts "#{i}. #{m}\n"
-           i += 1
-       }
-    end
-
-    def action_quit
-       exit 
-    end
-
-    def call_action(index)
-       self.send(@actions[index].to_sym) 
-    end
-
-end
+require './menu.rb'
 
 class MyMenu < Menu
 
@@ -49,24 +23,24 @@ class MyMenu < Menu
     def action_list_submissions
         i = 0
         fetch_submissions.each {|s|
-            puts "#{i} #{s.student} <#{s.file_name}>"
+            puts "#{i} #{s.student} <#{s.file_name}>" 
             i += 1
         }
     end
 
     def action_download
-       puts "Path to store downloads: "
+       print "Path to store downloads: "
        rootPath = gets.strip
 
-       puts "Start index (zero-based): "
+       print "Start index (zero-based): "
        start = Integer(gets)
 
-       puts "Number of students: "
+       print "Number of students: "
        count = Integer(gets)
 
        submissions = fetch_submissions
        last = ""
-       while count > 0
+       while count > 0 && start < submissions.size
            s = submissions[start]
            path = "#{rootPath}/#{s.student.sub(", ", ".")}"
            FileUtils.mkdir_p(path) unless File.directory?(path)
@@ -84,9 +58,10 @@ class MyMenu < Menu
     end
 end
 
-puts "Email: "
+print "Email: "
 email = gets.strip
-puts "Password: "
+
+print "Password: "
 password = STDIN.noecho(&:gets).strip
 
 miside = MiSide.new
@@ -98,6 +73,7 @@ submissionUrl = gets
 m = MyMenu.new(miside, submissionUrl)
 while true
     m.print_menu
+    print "Select an action: "
     m.call_action(Integer(gets))
 end
 
