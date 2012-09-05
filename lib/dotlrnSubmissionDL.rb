@@ -3,9 +3,9 @@
 require 'fileutils'
 require 'io/console'
 
-require './miside.rb'
-require './submissions.rb'
-require './menu.rb'
+require 'miside.rb'
+require 'submissions.rb'
+require 'menu.rb'
 
 class MyMenu < Menu
 
