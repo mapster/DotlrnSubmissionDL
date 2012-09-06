@@ -33,11 +33,13 @@ class MainMenu < Menu
         select_menu = SelectSubMenu.new(submissions)
         puts "Select first student in range by: "
         start_index = select_menu.display
+        return if start_index == -1 
         puts "Selected index #{start_index} (#{submissions[start_index].student})"
 
         select_menu = SelectSubMenu.new(submissions, start_index)
         puts "Select last student in range by: "
         end_index = select_menu.display
+        return if end_index == -1
         puts "Selected index #{start_index} (#{submissions[start_index].student})"
 
         last = ""
@@ -136,5 +138,14 @@ class SelectSubMenu < Menu
             end
             add 
         }
+    end
+
+    def action_cancel
+        self.run!
+        -1
+    end
+
+    def action_quit
+        exit
     end
 end
