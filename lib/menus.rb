@@ -43,11 +43,12 @@ class MainMenu < Menu
         last = ""
         while start_index <= end_index && start_index < submissions.size
             s = submissions[start_index]
-            path = "#{rootPath}/#{s.student.sub(", ", ".")}"
+            path = "#{rootPath}/#{s.student.sub(", ", "-").gsub(" ", ".")}"
             FileUtils.mkdir_p(path) unless File.directory?(path)
             puts "Downloading: #{s.student} <#{s.file_name}>"
 
-            filepath = "#{path}/#{s.last_modified}-#{s.file_name}"
+            datetime = DateTime.strptime(s.last_modified, '%d.%m.%y %H:%M').strftime("%Y-%m-%dT%H:%M")
+            filepath = "#{path}/#{datetime}-#{s.file_name}"
             open(filepath, "wb") {|file|
                 file.write(@miside.fetch_submission(s.url).body)
             }
@@ -80,9 +81,14 @@ class SelectSubMenu < Menu
     def action_by_student_count
         print "Enter student count (i.e the xth student): "
         number = read_int
-        last = @submissions[0].student
-        index = 0
-        current = 1
+        while number < 1
+            print "Count must be larger than 0: "
+            number = read_int
+        end
+
+        last = @submissions[@first].student
+        index = @first
+        current = @first +1
         while number > 1 && current < @submissions.size
             s = @submissions[current]
             if last != s.student
