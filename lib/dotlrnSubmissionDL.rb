@@ -3,6 +3,7 @@ require 'io/console'
 require 'yaml'
 
 require 'miside/base'
+require 'miside/auth'
 require 'submissions'
 require 'menus'
 

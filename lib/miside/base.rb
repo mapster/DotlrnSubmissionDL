@@ -1,7 +1,6 @@
 require 'net/http'
 require 'uri'
 
-require 'miside/auth'
 
 module URI
     class << self
@@ -23,7 +22,7 @@ class MiSide
     LOGIN_URI = URI.parse(LOGIN_URL)
 
     def fetch_submission(path)
-        fetch ("#{LOGIN_URI.scheme}://#{LOGIN_URI.host}#{path}") {|response|
+        fetch ("#{LOGIN_URI.scheme}://#{LOGIN_URI.host}#{path.sub("version%5fid","version_id")}") {|response|
             follow_redirect(response)
         }
     end
